@@ -1,0 +1,6 @@
+{
+    "files.associations": {
+        "hiredis.h": "c",
+        "opensm.pb-c.h": "c"
+    }
+}
