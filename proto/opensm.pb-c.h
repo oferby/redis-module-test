@@ -28,37 +28,35 @@ typedef struct StoreMessage StoreMessage;
 struct  Port
 {
   ProtobufCMessage base;
-  /*
-   * bytes portNum = 2;
-   * uint64 parentNodeGuid = 3;
-   * uint32 healthy = 4;
-   * uint64 neighPortGuid = 5;
-   * bytes neighPortNum = 6;
-   * uint64 mKey = 7;
-   * uint64 subnetPrefix = 8;
-   * uint32 baseLid = 9;
-   * uint32 masterSmLid = 10;
-   * bytes linkWidthEnabled = 11;
-   * bytes linkWidthSupported = 12;
-   * bytes linkWidthActive = 13;
-   * bytes linkSpeedEnabled = 14;
-   * bytes linkSpeedSupported = 15;
-   * bytes linkSpeedActive = 16;
-   * bytes physState = 17;
-   * bytes logicalState = 18;
-   * bytes vlCap = 19;
-   * bytes vlHighLimit = 20;
-   * bytes vlArbHighCap = 21;
-   * bytes vlArbLowCap = 22;
-   * bytes mtuCap = 23;
-   * uint32 portFabricState = 24;
-   * bytes isSmPort = 25;
-   */
   uint64_t portguid;
+  ProtobufCBinaryData portnum;
+  uint64_t parentnodeguid;
+  uint32_t healthy;
+  uint64_t neighportguid;
+  ProtobufCBinaryData neighportnum;
+  uint64_t mkey;
+  uint64_t subnetprefix;
+  uint32_t baselid;
+  uint32_t mastersmlid;
+  ProtobufCBinaryData linkwidthenabled;
+  ProtobufCBinaryData linkwidthsupported;
+  ProtobufCBinaryData linkwidthactive;
+  ProtobufCBinaryData linkspeedenabled;
+  ProtobufCBinaryData linkspeedsupported;
+  ProtobufCBinaryData linkspeedactive;
+  ProtobufCBinaryData physstate;
+  ProtobufCBinaryData logicalstate;
+  ProtobufCBinaryData vlcap;
+  ProtobufCBinaryData vlhighlimit;
+  ProtobufCBinaryData vlarbhighcap;
+  ProtobufCBinaryData vlarblowcap;
+  ProtobufCBinaryData mtucap;
+  uint32_t portfabricstate;
+  ProtobufCBinaryData issmport;
 };
 #define PORT__INIT \
  { PROTOBUF_C_MESSAGE_INIT (&port__descriptor) \
-    , 0 }
+    , 0, {0,NULL}, 0, 0, 0, {0,NULL}, 0, 0, 0, 0, {0,NULL}, {0,NULL}, {0,NULL}, {0,NULL}, {0,NULL}, {0,NULL}, {0,NULL}, {0,NULL}, {0,NULL}, {0,NULL}, {0,NULL}, {0,NULL}, {0,NULL}, 0, {0,NULL} }
 
 
 struct  Node

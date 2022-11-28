@@ -22,12 +22,10 @@ int set_port_command(redisContext *c) {
     msg.ports = (Port**) calloc(1, sizeof(Port));
 
     Port p = PORT__INIT;
-    p.portguid = 12355;
+    p.portguid = 123456789;
 
     msg.ports[0] = &p;
     msg.timestamp = 9876;
-
-    // printf("portGUID = %li\n", msg.ports[0]->portguid);
 
     len = store_message__get_packed_size(&msg);
     buf = calloc(1, len);
@@ -46,11 +44,11 @@ int set_port_command(redisContext *c) {
      
 }
 
-int get_port_command(redisContext *c) {
+int get_port_command(redisContext *c, const char* key) {
 
     redisReply *reply;
 
-    reply = (redisReply*) redisCommand(c, STORE_COMMAND_GET);
+    reply = (redisReply*) redisCommand(c, "%s %s", STORE_COMMAND_GET, key);
     printf("GET: %s\n", reply->str);    
 
     return 0;
@@ -62,7 +60,7 @@ int main (int argc, char **argv) {
 
     int err;
     redisContext *c;
-    const char *hostname = (argc > 1) ? argv[1] : "172.31.93.37";
+    const char *hostname = (argc > 1) ? argv[1] : "192.168.67.183";
 
     int port = (argc > 2) ? atoi(argv[2]) : 6379;
 

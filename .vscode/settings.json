@@ -1,6 +1,10 @@
 {
     "files.associations": {
         "hiredis.h": "c",
-        "opensm.pb-c.h": "c"
+        "opensm.pb-c.h": "c",
+        "stdio.h": "c",
+        "types.h": "c",
+        "common.h": "c",
+        "string.h": "c"
     }
 }

@@ -1,9 +1,13 @@
 
 #include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
 #include "redismodule.h"
 #include "../common.h"
 #include "../proto/opensm.pb-c.h"
 
+#define PORT_KEY_PREFIX "PORT"
+#define NODE_KEY_PREFIX "NODE"
 
 /** Function to pass to protobuf functions to allocate memory. */
 static void * protobuf_alloc_cb(void *allocator_data, size_t size)
@@ -28,21 +32,57 @@ struct ProtobufCAllocator* store_protobuf_allocator_get()
     return &protobuf_allocator;
 }
 
+
+int setPort(RedisModuleCtx *ctx, Port* port) {
+    
+    uint8_t*      buf;
+    char* c_key;
+
+    size_t t = sizeof(PORT_KEY_PREFIX)+ sizeof(port->portguid) + 1;
+
+    c_key = calloc(1, t);
+    sprintf(c_key, "%s:%ld", PORT_KEY_PREFIX,  port->portguid);
+
+    RedisModuleString* str_for_key = RedisModule_CreateString(ctx, c_key, t);
+    
+    RedisModuleKey *key = RedisModule_OpenKey(ctx, str_for_key, REDISMODULE_WRITE);
+    if (RedisModule_KeyType(key) == REDISMODULE_KEYTYPE_EMPTY) {
+        size_t len = port__get_packed_size(port);
+        buf = calloc(1, len);
+        size_t pack_len = port__pack(port, buf);
+        RedisModuleString* str = RedisModule_CreateString(ctx, buf, pack_len);
+        RedisModule_StringSet(key, str);
+    } else {
+        return 1;
+    }
+
+    return 0;
+}
+
+
+
 int SetPortRedisCommand(RedisModuleCtx *ctx, RedisModuleString **argv, int argc) {
 
     // RedisModule_Log(ctx, "warning ", "got SET command");
 
-    StoreMessage *msg = NULL;
+    StoreMessage* msg = NULL;
     size_t        len = 0;
-    const char   *ptr = NULL;
+    const char*   ptr = NULL;
+
 
     ptr = RedisModule_StringPtrLen(argv[1], &len);
 
     msg = store_message__unpack(store_protobuf_allocator_get(), len, (uint8_t*)ptr);
 
-    int val = msg->timestamp;
+    int val = 0;
 
-    // RedisModule_ReplyWithString(ctx, argv[0]);
+    for (int i = 0; i < msg->n_ports; i++) {
+
+        Port* p = msg->ports[i];
+        val+=setPort(ctx, p);
+
+    }
+
     RedisModule_ReplyWithLongLong(ctx, val);
     return REDISMODULE_OK;
 
