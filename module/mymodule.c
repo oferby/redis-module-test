@@ -55,8 +55,8 @@ int setPort(RedisModuleCtx *ctx, Port* port) {
     } else {
         return 1;
     }
-
-    return 0;
+    
+    return t;
 }
 
 
@@ -90,10 +90,28 @@ int SetPortRedisCommand(RedisModuleCtx *ctx, RedisModuleString **argv, int argc)
 
 int GetPortRedisCommand(RedisModuleCtx *ctx, RedisModuleString **argv, int argc) {
 
-    RedisModule_Log(ctx, "warning ", "got GET command");
+    size_t        len = 0;
+    const char*   ptr = NULL;
+    char* c_key;
 
-    RedisModule_ReplyWithCString(ctx, "OK");
+    ptr = RedisModule_StringPtrLen(argv[1], &len);
 
+    size_t t = sizeof(PORT_KEY_PREFIX)+ len;
+    c_key = calloc(1, t);
+    sprintf(c_key, "%s:%s", PORT_KEY_PREFIX,  ptr);
+
+    RedisModuleString* str_for_key = RedisModule_CreateString(ctx, c_key, t);
+    
+    RedisModuleKey *key = RedisModule_OpenKey(ctx, str_for_key, REDISMODULE_READ);
+    if (RedisModule_KeyType(key) == REDISMODULE_KEYTYPE_EMPTY) {
+        // RedisModule_ReplyWithCString(ctx, c_key);
+        RedisModule_ReplyWithLongLong(ctx, t);    
+    } else {
+        size_t str_len = RedisModule_ValueLength(key);
+        char* str = RedisModule_StringDMA(key, &str_len, REDISMODULE_READ);
+        RedisModule_ReplyWithCString(ctx, str);
+        // RedisModule_ReplyWithLongLong(ctx, str_len);    
+    }
     
     return REDISMODULE_OK;
 

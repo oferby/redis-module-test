@@ -44,12 +44,21 @@ int set_port_command(redisContext *c) {
      
 }
 
-int get_port_command(redisContext *c, const char* key) {
+int get_port_command(redisContext *c) {
 
     redisReply *reply;
 
-    reply = (redisReply*) redisCommand(c, "%s %s", STORE_COMMAND_GET, key);
-    printf("GET: %s\n", reply->str);    
+    uint64_t portGUID = 123456789;
+
+    reply = (redisReply*) redisCommand(c, "%s %ld", STORE_COMMAND_GET, portGUID);
+
+    if (reply->len > 0) {
+        // Port p = PORT__INIT;
+        Port *p = port__unpack(NULL, 5, (uint8_t*) reply->str);
+        printf("GET: %li\n", p->portguid);
+
+    } else
+        printf("GET (int): %lli\n", reply->integer);
 
     return 0;
 
@@ -78,13 +87,9 @@ int main (int argc, char **argv) {
 
     puts("connected...");
 
-
     err = set_port_command(c);
+    get_port_command(c);
 
-    // puts("back...");
-
-
-    // err = get_port_command(c);
 
     redisFree(c);
     
