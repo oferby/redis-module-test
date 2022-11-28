@@ -180,11 +180,23 @@ const ProtobufCMessageDescriptor port__descriptor =
   (ProtobufCMessageInit) port__init,
   NULL,NULL,NULL    /* reserved[123] */
 };
-static const ProtobufCFieldDescriptor node__field_descriptors[1] =
+static const ProtobufCFieldDescriptor node__field_descriptors[2] =
 {
   {
-    "ports",
+    "nodeGUID",
     1,
+    PROTOBUF_C_LABEL_NONE,
+    PROTOBUF_C_TYPE_UINT64,
+    0,   /* quantifier_offset */
+    offsetof(Node, nodeguid),
+    NULL,
+    NULL,
+    0,             /* flags */
+    0,NULL,NULL    /* reserved1,reserved2, etc */
+  },
+  {
+    "ports",
+    2,
     PROTOBUF_C_LABEL_REPEATED,
     PROTOBUF_C_TYPE_MESSAGE,
     offsetof(Node, n_ports),
@@ -196,12 +208,13 @@ static const ProtobufCFieldDescriptor node__field_descriptors[1] =
   },
 };
 static const unsigned node__field_indices_by_name[] = {
-  0,   /* field[0] = ports */
+  0,   /* field[0] = nodeGUID */
+  1,   /* field[1] = ports */
 };
 static const ProtobufCIntRange node__number_ranges[1 + 1] =
 {
   { 1, 0 },
-  { 0, 1 }
+  { 0, 2 }
 };
 const ProtobufCMessageDescriptor node__descriptor =
 {
@@ -211,7 +224,7 @@ const ProtobufCMessageDescriptor node__descriptor =
   "Node",
   "",
   sizeof(Node),
-  1,
+  2,
   node__field_descriptors,
   node__field_indices_by_name,
   1,  node__number_ranges,

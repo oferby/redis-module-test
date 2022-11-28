@@ -1,10 +1,7 @@
 #include <stdlib.h>
-#include <cstdio>
+#include <stdio.h>
 #include "../proto/opensm.pb-c.h"
-// #include <hiredis/hiredis.h>
-// #include "redismodule.h"
 #include "../common.h"
-// #include <hiredis/hiredis_ssl.h>
 
 /** Function to pass to protobuf functions to allocate memory. */
 static void * protobuf_alloc_cb(void *allocator_data, size_t size)
@@ -39,12 +36,10 @@ int main (int argc, char **argv) {
     msg.n_ports = 1;
     msg.ports = (Port**) calloc(1, sizeof(Port));
 
-    Port *p;
-    p = (Port*) calloc(1, sizeof(Port));
-    port__init(p);
-    p->portguid = 12345;
+    Port p = PORT__INIT;
+    p.portguid = 12345;
 
-    msg.ports[0] = p;
+    msg.ports[0] = &p;
     msg.timestamp = 9876;
 
     printf("portGUID = %li\n", msg.ports[0]->portguid);
@@ -58,14 +53,15 @@ int main (int argc, char **argv) {
 
     StoreMessage *msg2 = NULL;
     const char   *ptr = NULL;
-
-
+    
     msg2 = store_message__unpack(store_protobuf_allocator_get(), req_len, (uint8_t*) buf);
 
 
+    
     printf("timestamp: %li\n", msg2->timestamp);
-    printf("portGUID: %li\n", msg2->ports[0]->portguid);
-
-
+    if (msg2->n_ports > 0)
+        printf("portGUID: %li\n", msg2->ports[0]->portguid);
+    if (msg2->n_nodes > 0)
+        printf("nodeGUID: %li\n", msg2->nodes[0]->nodeguid);
 
 }

@@ -12,37 +12,33 @@ void print_usage() {
 
 int set_port_command(redisContext *c) {
 
-    void *buf = NULL;   /* Buffer to store serialized data */
-    size_t len;         // buffer size
-    size_t req_len = 0;
     redisReply *reply;
 
-    StoreMessage *msg;
-    msg = (StoreMessage*) calloc(1, sizeof(StoreMessage));
-    store_message__init(msg);
+    void *buf = NULL;   /* Buffer to store serialized data */
+    size_t len;         // buffer size
 
+    StoreMessage msg = STORE_MESSAGE__INIT;
+    msg.n_ports = 1;
+    msg.ports = (Port**) calloc(1, sizeof(Port));
 
-    Port *p;
-    p = (Port*) calloc(1, sizeof(Port));
-    port__init(p);
-    p->portguid = 12345;
+    Port p = PORT__INIT;
+    p.portguid = 12355;
 
-    msg->port = p;
+    msg.ports[0] = &p;
+    msg.timestamp = 9876;
 
-    msg->timestamp = 9876;
+    // printf("portGUID = %li\n", msg.ports[0]->portguid);
 
-    printf("portGUID = %li\n", msg->port->portguid);
-
-    len = store_message__get_packed_size(msg);
+    len = store_message__get_packed_size(&msg);
     buf = calloc(1, len);
-    req_len = store_message__pack(msg, (uint8_t*) buf);
+    store_message__pack(&msg, (uint8_t*) buf);
 
-    reply = (redisReply*) redisCommand(c, "%s %b", STORE_COMMAND_SET, buf);
+    reply = (redisReply*) redisCommand(c, "%s %s", STORE_COMMAND_SET, buf);
 
     if (reply->len > 0)
         printf("SET: %s\n", reply->str);
     else
-        printf("SET: %lli\n", reply->integer);
+        printf("SET (int): %lli\n", reply->integer);
     
     free(buf);
     freeReplyObject(reply);
@@ -66,7 +62,7 @@ int main (int argc, char **argv) {
 
     int err;
     redisContext *c;
-    const char *hostname = (argc > 1) ? argv[1] : "172.31.86.116";
+    const char *hostname = (argc > 1) ? argv[1] : "172.31.93.37";
 
     int port = (argc > 2) ? atoi(argv[2]) : 6379;
 

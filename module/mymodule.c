@@ -42,23 +42,7 @@ int SetPortRedisCommand(RedisModuleCtx *ctx, RedisModuleString **argv, int argc)
 
     int val = msg->timestamp;
 
-    // switch (msg->data_case)
-    // {
-    //     case STORE_MESSAGE__DATA__NOT_SET:
-    //         val = 1;
-    //         break;
-    //     case STORE_MESSAGE__DATA_PORT:
-    //         val = 2;
-    //         break;
-    //     case STORE_MESSAGE__DATA_NODE:
-    //         val = 3;
-    //         break;
-     
-    //     default:
-    //         break;
-    // } 
-
-    // RedisModule_ReplyWithString(ctx, "OK");
+    // RedisModule_ReplyWithString(ctx, argv[0]);
     RedisModule_ReplyWithLongLong(ctx, val);
     return REDISMODULE_OK;
 

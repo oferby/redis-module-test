@@ -30,7 +30,8 @@ message Port {
 }
 
 message Node {
-    repeated Port ports = 1;
+    uint64 nodeGUID = 1;
+    repeated Port ports = 2;
 }
 
 

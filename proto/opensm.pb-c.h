@@ -64,12 +64,13 @@ struct  Port
 struct  Node
 {
   ProtobufCMessage base;
+  uint64_t nodeguid;
   size_t n_ports;
   Port **ports;
 };
 #define NODE__INIT \
  { PROTOBUF_C_MESSAGE_INIT (&node__descriptor) \
-    , 0,NULL }
+    , 0, 0,NULL }
 
 
 struct  StoreMessage
